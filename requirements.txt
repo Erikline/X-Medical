@@ -8,10 +8,10 @@ matplotlib             # ultralytics 和其他库需要
 PyYAML                 # ultralytics 和其他库需要
 pandas                 # ultralytics 可能需要
 scipy                  # ultralytics 可能需要
-seaborn                # ultralytics 可能需要（绘图相关）
+seaborn                # ultralytics 可能需要
+tqdm                   # ultralytics 可能需要
 
-# --- PyTorch (非常重要, 版本需兼容你的模型和环境) ---
-# 尝试不指定版本，让 pip 自动选择，或者根据你的训练环境指定
+# --- PyTorch ---
 torch
 torchvision
 # -------------------------------------------------
