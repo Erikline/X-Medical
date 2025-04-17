@@ -1,0 +1,78 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# YOLO model files
+*.pt
+*.pth
+*.onnx
+*.mlmodel
+*.torchscript
+*.tflite
+*.h5
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+.ipynb_checkpoints
+
+# Project specific
+runs/
+temp/
+tmp/
+data/
+!data/images/
+logs/
+
+# Media files (if not specifically needed)
+*.mp4
+*.mov
+*.avi
+*.mpg
+*.mpeg
+*.m4v
+*.wmv
+*.mkv
+
+# Except sample images for documentation
+!*.jpg
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

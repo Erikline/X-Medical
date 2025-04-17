@@ -1,0 +1,24 @@
+# requirements.txt
+
+# Web Framework
+streamlit>=1.22.0
+
+# Computer Vision
+opencv-python-headless>=4.5.5
+
+# Object Detection Model Framework
+ultralytics>=8.0.0
+
+# Numerical Computing
+numpy>=1.20.0
+
+# Image Handling
+Pillow>=8.0.0
+
+# Deep Learning Backend (Required by Ultralytics)
+# Note: Installing torch and torchvision might require specific commands
+# depending on your OS and CUDA version if using GPU.
+# Check https://pytorch.org/get-started/locally/
+# Pip will try to install compatible versions if these are listed.
+torch
+torchvision
