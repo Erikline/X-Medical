@@ -1,4 +1,4 @@
-# app.py (加入详细调试步骤)
+# app.py 
 # Author: Hongyu Lin
 # Institution: School of Mathematics and Computer Science, Shantou University
 
@@ -6,10 +6,28 @@ import sys # 导入 sys 用于查看路径
 from pathlib import Path
 import streamlit as st
 import os # 确保导入 os 用于文件检查
+# --- 确保所有 import 都在最前面 ---
+import cv2
+import numpy as np
+from PIL import Image
+import tempfile
+import time
+# 尝试将 ultralytics 的导入也放在这里，如果后续不再出错的话
+# 但如果这里出错，就需要保持 try...except 结构
+# from ultralytics import YOLO # 暂时不在顶层导入，保留在 try...except 中
+
+# --- !!! 页面基础配置 (必须是第一个 Streamlit 命令) !!! ---
+st.set_page_config(
+    page_title="XMedical - 智能影像分析",
+    page_icon="🔬",
+    layout="wide"
+)
+# --- !!! 结束页面配置代码块 !!! ---
+
 
 # --- 调试代码：检查 Python 路径和 ultralytics 模块 ---
+# (这部分代码现在在 set_page_config 之后)
 st.write("--- Python 搜索路径 (sys.path) ---")
-# 使用 st.text 而不是 st.write 来更好地显示列表换行
 st.text("\n".join(sys.path)) # 打印 Python 查找模块的所有路径
 st.write("------------------------------------")
 
@@ -26,7 +44,11 @@ if expected_ultralytics_dir.exists():
     # 检查顶层 __init__.py
     expected_top_init = expected_ultralytics_dir / '__init__.py'
     st.write(f"调试信息：检查期望目录下是否存在 __init__.py: {expected_top_init.exists()}")
-    st.write(f"调试信息：期望目录下的部分内容: {os.listdir(expected_ultralytics_dir)[:15]}") # 只显示前15个
+    # 使用 try-except 防止 os.listdir 在路径不存在或无权限时报错
+    try:
+        st.write(f"调试信息：期望目录下的部分内容: {os.listdir(expected_ultralytics_dir)[:15]}") # 只显示前15个
+    except Exception as list_err:
+        st.warning(f"无法列出期望目录内容: {list_err}")
 
     # 检查期望目录下的 data 文件夹
     expected_data_dir = expected_ultralytics_dir / 'data'
@@ -36,7 +58,10 @@ if expected_ultralytics_dir.exists():
         # 检查 data 目录下的 __init__.py
         expected_data_init = expected_data_dir / '__init__.py'
         st.write(f"调试信息：检查期望 data 目录下是否存在 __init__.py: {expected_data_init.exists()}")
-        st.write(f"调试信息：期望 data 目录下的部分内容: {os.listdir(expected_data_dir)[:15]}") # 只显示前15个
+        try:
+            st.write(f"调试信息：期望 data 目录下的部分内容: {os.listdir(expected_data_dir)[:15]}") # 只显示前15个
+        except Exception as list_data_err:
+            st.warning(f"无法列出期望 data 目录内容: {list_data_err}")
 
 st.write("--- 尝试导入 ultralytics 包及子模块 ---")
 try:
@@ -76,40 +101,35 @@ st.write("--- 调试结束，开始主要导入 ---")
 
 
 # --- 主要导入（现在放在调试代码之后，并用 try...except 包裹） ---
+YOLO_IMPORTED = False # 添加一个标志位
 try:
-    # NO MORE sys.path manipulation needed here if ultralytics lib is sibling to app.py
     # from pathlib import Path # 已在前面导入
     # import streamlit as st # 已在前面导入
-    import cv2
-    import numpy as np
-    from PIL import Image
+    # import cv2           # 移到这里，如果 YOLO 导入失败则不需要
+    # import numpy as np     # 同上
+    # from PIL import Image # 同上
     # This import should now find the 'ultralytics' folder located
     # as a sibling to this app.py file.
-    from ultralytics import YOLO # <--- 错误发生点
+    from ultralytics import YOLO # <--- 尝试导入 YOLO
+    import cv2                 # 只有 YOLO 导入成功后才导入这些
+    import numpy as np
+    from PIL import Image
     import tempfile
     import time
-    # import os # 已在前面导入
 
+    YOLO_IMPORTED = True # 如果成功，设置标志位
     st.success("主要依赖导入成功（包括 from ultralytics import YOLO）")
 
 except ImportError as e:
     st.error(f"在主要导入阶段发生 ImportError: {e}") # 错误会在这里被捕获
     st.error("请检查上面的调试信息，确认 ultralytics 库是否被正确找到以及其内部结构是否完整。")
-    st.stop() # 如果导入失败，停止应用
+    # st.stop() # 暂时不停止，让应用加载界面框架
 except Exception as e:
     st.error(f"在主要导入阶段发生其他错误: {e}")
-    st.stop()
-
-# --- 页面基础配置 ---
-# (代码无变化)
-st.set_page_config(
-    page_title="XMedical - 智能影像分析",
-    page_icon="🔬",
-    layout="wide"
-)
+    # st.stop() # 暂时不停止
 
 # --- 自定义 CSS ---
-# (代码无变化)
+# (代码无变化, 确保在 set_page_config 之后)
 st.markdown(
     """
     <style>
@@ -135,40 +155,33 @@ APP_DIR = Path(__file__).resolve().parent # Directory containing app.py
 # Model path is now correctly relative to APP_DIR
 model_path = APP_DIR / 'Pt Source' / 'X-Medical.pt'
 
-if 'model' not in st.session_state:
-    with st.spinner("⏳ 正在加载 X-Medical 深度学习模型，请稍候..."):
-        try:
-            # 移除这里的调试信息，因为顶部已经有了更详细的
-            # st.write(f"调试信息：脚本目录 (APP_DIR): {APP_DIR}")
-            # st.write(f"调试信息：尝试从以下路径加载模型: {model_path}")
-            # st.write(f"调试信息：该路径的文件是否存在? {model_path.exists()}")
+# 只有在 YOLO 成功导入后才尝试加载模型
+if YOLO_IMPORTED:
+    if 'model' not in st.session_state:
+        with st.spinner("⏳ 正在加载 X-Medical 深度学习模型，请稍候..."):
+            try:
+                # 移除这里的调试信息，因为顶部已经有了更详细的
+                if not model_path.exists():
+                    st.error(f"关键错误：模型文件未在预期路径找到！")
+                    st.error(f"预期路径: {model_path}")
+                    st.error(f"请检查 GitHub 仓库中，在 '{APP_DIR.name}' 文件夹内是否存在 'Pt Source/X-Medical.pt'，并检查大小写。")
+                    st.stop()
 
-            if not model_path.exists():
-                st.error(f"关键错误：模型文件未在预期路径找到！")
-                st.error(f"预期路径: {model_path}")
-                st.error(f"请检查 GitHub 仓库中，在 '{APP_DIR.name}' 文件夹内是否存在 'Pt Source/X-Medical.pt'，并检查大小写。")
-                st.stop()
+                # 确保 YOLO 类已成功导入 (理论上 YOLO_IMPORTED=True 已经保证了)
+                # if 'YOLO' not in globals():
+                #      st.error("YOLO 类未能成功导入，无法加载模型。请检查顶部的导入错误。")
+                #      st.stop()
 
-            # 确保 YOLO 类已成功导入
-            if 'YOLO' not in globals():
-                 st.error("YOLO 类未能成功导入，无法加载模型。请检查顶部的导入错误。")
-                 st.stop()
+                # Load model using the absolute path derived correctly
+                st.session_state.model = YOLO(model_path)
+                # st.success("✅ 模型加载成功！")
 
-            # Load model using the absolute path derived correctly
-            st.session_state.model = YOLO(model_path)
-            # st.success("✅ 模型加载成功！")
-
-        except Exception as e:
-            st.error(f"加载模型时发生严重错误：{e}")
-            st.error(f"尝试加载的路径是: {model_path}")
-            # Add more debug info about the imported YOLO
-            # 这部分逻辑在主要导入失败时不会执行，因为会 st.stop()
-            # if 'YOLO' in globals():
-            #    st.error(f"YOLO object type: {type(YOLO)}")
-            #    st.error(f"YOLO module location: {YOLO.__module__}") # Where did YOLO come from?
-            # else:
-            #    st.error("YOLO class itself could not be imported.")
-            st.stop()
+            except Exception as e:
+                st.error(f"加载模型时发生严重错误：{e}")
+                st.error(f"尝试加载的路径是: {model_path}")
+                st.stop() # 模型加载失败则停止
+else:
+    st.error("由于 YOLO未能成功导入, 模型加载步骤已跳过。请解决导入问题。")
 
 
 # --- 创建选项卡 ---
@@ -193,6 +206,7 @@ with tab1:
 
     tmp_file_path = None # Initialize tmp_file_path
     if img_file_buffer is not None:
+        # 只有模型成功加载才执行预测
         if 'model' in st.session_state and st.session_state.model is not None:
             bytes_data = img_file_buffer.getvalue()
             try:
@@ -247,7 +261,7 @@ with tab1:
                     except OSError as e_rm:
                         st.warning(f"无法删除临时文件 {tmp_file_path}: {e_rm}")
         else:
-            st.error("模型未能成功加载，无法进行预测。请检查应用日志。")
+            st.error("模型未能成功加载或初始化，无法进行预测。请检查应用日志和顶部的导入/加载状态。")
 
 # --- 选项卡2: 关于系统 ---
 # (代码无变化)
