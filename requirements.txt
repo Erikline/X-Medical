@@ -7,9 +7,6 @@ streamlit>=1.22.0
 # 添加 headless 版本
 opencv-python-headless 
 
-# Object Detection Model Framework
-ultralytics>=8.0.0
-
 # Numerical Computing
 numpy>=1.20.0
 
