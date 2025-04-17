@@ -1,4 +1,4 @@
-# app.py 
+# app.py
 # Author: Hongyu Lin
 # Institution: School of Mathematics and Computer Science, Shantou University
 
@@ -31,7 +31,7 @@ st.write("--- Python 搜索路径 (sys.path) ---")
 st.text("\n".join(sys.path)) # 打印 Python 查找模块的所有路径
 st.write("------------------------------------")
 
-# 获取当前脚本(app.py)所在的目录 (假设现在是 X-Medical App 目录)
+# 获取当前脚本(app.py)所在的目录 (应该是 X-Medical App 目录)
 script_dir = Path(__file__).resolve().parent
 st.write(f"调试信息：当前脚本目录 (script_dir): {script_dir}")
 
@@ -78,7 +78,7 @@ try:
         st.write("成功导入 'ultralytics.data' 子模块。")
         st.write(f"实际加载的 ultralytics.data 路径 (__path__): {getattr(ultralytics.data, '__path__', 'N/A')}")
     except ImportError as e_data:
-        st.error(f"尝试导入 'ultralytics.data' 子模块时失败: {e_data}") # 预期错误会在这里
+        st.error(f"尝试导入 'ultralytics.data' 子模块时失败: {e_data}")
     except Exception as e_data_other:
          st.error(f"尝试导入 ultralytics.data 时发生其他错误: {e_data_other}")
 
@@ -148,29 +148,34 @@ st.title("XMedical - 轻量级医学影像智能分析系统")
 st.markdown("###### 利用先进 AI 技术，辅助分析医学影像（如脑部 MRI、胸部 CT、细胞图像等），快速识别潜在病灶或特定细胞。")
 
 
-# --- 模型加载 ---
-# Calculate path relative to this script (app.py)
-# APP_DIR 已在调试部分获取 (script_dir), 但为清晰起见再获取一次
-APP_DIR = Path(__file__).resolve().parent # Directory containing app.py
-# Model path is now correctly relative to APP_DIR
-model_path = APP_DIR / 'Pt Source' / 'X-Medical.pt'
+# --- 模型加载 (修正路径计算逻辑) ---
+# APP_DIR 是 app.py 所在的目录: /mount/src/x-medical/X-Medical App/
+APP_DIR = Path(__file__).resolve().parent
+
+# --- !!! 修改路径计算 !!! ---
+# 获取项目根目录 (APP_DIR 的上一级目录)
+# project_root 应该是 /mount/src/x-medical/
+project_root = APP_DIR.parent
+# 现在基于项目根目录构建模型路径
+model_path = project_root / 'Pt Source' / 'X-Medical.pt'
+# --- !!! 结束修改 !!! ---
+
 
 # 只有在 YOLO 成功导入后才尝试加载模型
 if YOLO_IMPORTED:
     if 'model' not in st.session_state:
         with st.spinner("⏳ 正在加载 X-Medical 深度学习模型，请稍候..."):
             try:
-                # 移除这里的调试信息，因为顶部已经有了更详细的
+                # 添加新的调试信息
+                st.write(f"调试信息：项目根目录 (project_root): {project_root}")
+                st.write(f"调试信息：修正后尝试加载模型的路径: {model_path}")
+                st.write(f"调试信息：修正后的路径文件是否存在? {model_path.exists()}")
+
                 if not model_path.exists():
                     st.error(f"关键错误：模型文件未在预期路径找到！")
-                    st.error(f"预期路径: {model_path}")
-                    st.error(f"请检查 GitHub 仓库中，在 '{APP_DIR.name}' 文件夹内是否存在 'Pt Source/X-Medical.pt'，并检查大小写。")
+                    st.error(f"预期路径: {model_path}") # 这个路径现在应该是 /mount/src/x-medical/Pt Source/X-Medical.pt
+                    st.error(f"请检查 GitHub 仓库中，项目根目录下 ('{project_root.name}') 是否存在 'Pt Source/X-Medical.pt'，并检查大小写。")
                     st.stop()
-
-                # 确保 YOLO 类已成功导入 (理论上 YOLO_IMPORTED=True 已经保证了)
-                # if 'YOLO' not in globals():
-                #      st.error("YOLO 类未能成功导入，无法加载模型。请检查顶部的导入错误。")
-                #      st.stop()
 
                 # Load model using the absolute path derived correctly
                 st.session_state.model = YOLO(model_path)
