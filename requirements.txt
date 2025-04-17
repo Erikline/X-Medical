@@ -10,6 +10,7 @@ pandas                 # ultralytics 可能需要
 scipy                  # ultralytics 可能需要
 seaborn                # ultralytics 可能需要
 tqdm                   # ultralytics 可能需要
+psutil                 # ultralytics 可能需要
 
 # --- PyTorch ---
 torch
