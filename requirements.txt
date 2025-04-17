@@ -1,22 +1,16 @@
 # requirements.txt
 
-# Web Framework
-streamlit>=1.22.0
+streamlit
+opencv-python-headless  # 用于图像处理
+numpy                  # ultralytics 和其他库需要
+Pillow                 # ultralytics 和其他库需要
+matplotlib             # <--- 添加这个！ultralytics 需要
+pandas                 # ultralytics 可能需要
+scipy                  # ultralytics 可能需要
+seaborn                # ultralytics 可能需要（绘图相关）
 
-# Computer Vision
-# 添加 headless 版本
-opencv-python-headless 
-
-# Numerical Computing
-numpy>=1.20.0
-
-# Image Handling
-Pillow>=8.0.0
-
-# Deep Learning Backend (Required by Ultralytics)
-# Note: Installing torch and torchvision might require specific commands
-# depending on your OS and CUDA version if using GPU.
-# Check https://pytorch.org/get-started/locally/
-# Pip will try to install compatible versions if these are listed.
+# --- PyTorch (非常重要, 版本需兼容你的模型和环境) ---
+# 尝试不指定版本，让 pip 自动选择，或者根据你的训练环境指定
 torch
 torchvision
+# -------------------------------------------------
