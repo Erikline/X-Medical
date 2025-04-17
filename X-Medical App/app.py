@@ -1,21 +1,107 @@
-# app.py (Simplified for Scenario 1 Structure)
+# app.py (加入详细调试步骤)
 # Author: Hongyu Lin
 # Institution: School of Mathematics and Computer Science, Shantou University
 
-# NO MORE sys.path manipulation needed here if ultralytics lib is sibling to app.py
+import sys # 导入 sys 用于查看路径
 from pathlib import Path
 import streamlit as st
-import cv2
-import numpy as np
-from PIL import Image
-# This import should now find the 'ultralytics' folder located
-# as a sibling to this app.py file.
-from ultralytics import YOLO
-import tempfile
-import time
-import os # Added for file cleanup
+import os # 确保导入 os 用于文件检查
+
+# --- 调试代码：检查 Python 路径和 ultralytics 模块 ---
+st.write("--- Python 搜索路径 (sys.path) ---")
+# 使用 st.text 而不是 st.write 来更好地显示列表换行
+st.text("\n".join(sys.path)) # 打印 Python 查找模块的所有路径
+st.write("------------------------------------")
+
+# 获取当前脚本(app.py)所在的目录 (假设现在是 X-Medical App 目录)
+script_dir = Path(__file__).resolve().parent
+st.write(f"调试信息：当前脚本目录 (script_dir): {script_dir}")
+
+# 期望的本地 ultralytics 库的路径 (假设它与 app.py 同级)
+expected_ultralytics_dir = script_dir / 'ultralytics'
+st.write(f"调试信息：期望的本地 ultralytics 库目录: {expected_ultralytics_dir}")
+st.write(f"调试信息：该期望目录是否存在? {expected_ultralytics_dir.exists()}")
+
+if expected_ultralytics_dir.exists():
+    # 检查顶层 __init__.py
+    expected_top_init = expected_ultralytics_dir / '__init__.py'
+    st.write(f"调试信息：检查期望目录下是否存在 __init__.py: {expected_top_init.exists()}")
+    st.write(f"调试信息：期望目录下的部分内容: {os.listdir(expected_ultralytics_dir)[:15]}") # 只显示前15个
+
+    # 检查期望目录下的 data 文件夹
+    expected_data_dir = expected_ultralytics_dir / 'data'
+    st.write(f"调试信息：期望的 data 子目录: {expected_data_dir}")
+    st.write(f"调试信息：该 data 子目录是否存在? {expected_data_dir.exists()}")
+    if expected_data_dir.exists():
+        # 检查 data 目录下的 __init__.py
+        expected_data_init = expected_data_dir / '__init__.py'
+        st.write(f"调试信息：检查期望 data 目录下是否存在 __init__.py: {expected_data_init.exists()}")
+        st.write(f"调试信息：期望 data 目录下的部分内容: {os.listdir(expected_data_dir)[:15]}") # 只显示前15个
+
+st.write("--- 尝试导入 ultralytics 包及子模块 ---")
+try:
+    # 1. 尝试导入顶层 ultralytics
+    import ultralytics
+    st.write(f"成功导入顶层 'ultralytics' 包。")
+    # __path__ 对于包更可靠，__file__ 指向 __init__.py
+    st.write(f"实际加载的 ultralytics 包路径 (__path__): {getattr(ultralytics, '__path__', 'N/A')}")
+    st.write(f"实际加载的 ultralytics 包文件 (__file__): {getattr(ultralytics, '__file__', 'N/A')}")
+
+    # 2. 尝试导入 ultralytics.data (如果顶层导入成功)
+    try:
+        import ultralytics.data
+        st.write("成功导入 'ultralytics.data' 子模块。")
+        st.write(f"实际加载的 ultralytics.data 路径 (__path__): {getattr(ultralytics.data, '__path__', 'N/A')}")
+    except ImportError as e_data:
+        st.error(f"尝试导入 'ultralytics.data' 子模块时失败: {e_data}") # 预期错误会在这里
+    except Exception as e_data_other:
+         st.error(f"尝试导入 ultralytics.data 时发生其他错误: {e_data_other}")
+
+    # 3. 尝试导入 ultralytics.data.augment (如果 data 导入成功)
+    try:
+        import ultralytics.data.augment
+        st.write("成功导入 'ultralytics.data.augment'。")
+    except ImportError as e_augment:
+        st.error(f"尝试导入 'ultralytics.data.augment' 时失败: {e_augment}")
+    except Exception as e_augment_other:
+         st.error(f"尝试导入 ultralytics.data.augment 时发生其他错误: {e_augment_other}")
+
+
+except ImportError as e_top:
+    st.error(f"尝试导入顶层 'ultralytics' 包时就已失败: {e_top}")
+except Exception as e_top_other:
+    st.error(f"检查 ultralytics 包时发生其他错误: {e_top_other}")
+
+st.write("--- 调试结束，开始主要导入 ---")
+
+
+# --- 主要导入（现在放在调试代码之后，并用 try...except 包裹） ---
+try:
+    # NO MORE sys.path manipulation needed here if ultralytics lib is sibling to app.py
+    # from pathlib import Path # 已在前面导入
+    # import streamlit as st # 已在前面导入
+    import cv2
+    import numpy as np
+    from PIL import Image
+    # This import should now find the 'ultralytics' folder located
+    # as a sibling to this app.py file.
+    from ultralytics import YOLO # <--- 错误发生点
+    import tempfile
+    import time
+    # import os # 已在前面导入
+
+    st.success("主要依赖导入成功（包括 from ultralytics import YOLO）")
+
+except ImportError as e:
+    st.error(f"在主要导入阶段发生 ImportError: {e}") # 错误会在这里被捕获
+    st.error("请检查上面的调试信息，确认 ultralytics 库是否被正确找到以及其内部结构是否完整。")
+    st.stop() # 如果导入失败，停止应用
+except Exception as e:
+    st.error(f"在主要导入阶段发生其他错误: {e}")
+    st.stop()
 
 # --- 页面基础配置 ---
+# (代码无变化)
 st.set_page_config(
     page_title="XMedical - 智能影像分析",
     page_icon="🔬",
@@ -23,6 +109,7 @@ st.set_page_config(
 )
 
 # --- 自定义 CSS ---
+# (代码无变化)
 st.markdown(
     """
     <style>
@@ -36,11 +123,14 @@ st.markdown(
 )
 
 # --- 应用主标题和描述 ---
+# (代码无变化)
 st.title("XMedical - 轻量级医学影像智能分析系统")
 st.markdown("###### 利用先进 AI 技术，辅助分析医学影像（如脑部 MRI、胸部 CT、细胞图像等），快速识别潜在病灶或特定细胞。")
 
+
 # --- 模型加载 ---
 # Calculate path relative to this script (app.py)
+# APP_DIR 已在调试部分获取 (script_dir), 但为清晰起见再获取一次
 APP_DIR = Path(__file__).resolve().parent # Directory containing app.py
 # Model path is now correctly relative to APP_DIR
 model_path = APP_DIR / 'Pt Source' / 'X-Medical.pt'
@@ -48,15 +138,21 @@ model_path = APP_DIR / 'Pt Source' / 'X-Medical.pt'
 if 'model' not in st.session_state:
     with st.spinner("⏳ 正在加载 X-Medical 深度学习模型，请稍候..."):
         try:
-            st.write(f"调试信息：脚本目录 (APP_DIR): {APP_DIR}")
-            st.write(f"调试信息：尝试从以下路径加载模型: {model_path}")
-            st.write(f"调试信息：该路径的文件是否存在? {model_path.exists()}")
+            # 移除这里的调试信息，因为顶部已经有了更详细的
+            # st.write(f"调试信息：脚本目录 (APP_DIR): {APP_DIR}")
+            # st.write(f"调试信息：尝试从以下路径加载模型: {model_path}")
+            # st.write(f"调试信息：该路径的文件是否存在? {model_path.exists()}")
 
             if not model_path.exists():
                 st.error(f"关键错误：模型文件未在预期路径找到！")
                 st.error(f"预期路径: {model_path}")
                 st.error(f"请检查 GitHub 仓库中，在 '{APP_DIR.name}' 文件夹内是否存在 'Pt Source/X-Medical.pt'，并检查大小写。")
                 st.stop()
+
+            # 确保 YOLO 类已成功导入
+            if 'YOLO' not in globals():
+                 st.error("YOLO 类未能成功导入，无法加载模型。请检查顶部的导入错误。")
+                 st.stop()
 
             # Load model using the absolute path derived correctly
             st.session_state.model = YOLO(model_path)
@@ -66,17 +162,21 @@ if 'model' not in st.session_state:
             st.error(f"加载模型时发生严重错误：{e}")
             st.error(f"尝试加载的路径是: {model_path}")
             # Add more debug info about the imported YOLO
-            try:
-                st.error(f"YOLO object type: {type(YOLO)}")
-                st.error(f"YOLO module location: {YOLO.__module__}") # Where did YOLO come from?
-            except NameError:
-                st.error("YOLO class itself could not be imported.")
+            # 这部分逻辑在主要导入失败时不会执行，因为会 st.stop()
+            # if 'YOLO' in globals():
+            #    st.error(f"YOLO object type: {type(YOLO)}")
+            #    st.error(f"YOLO module location: {YOLO.__module__}") # Where did YOLO come from?
+            # else:
+            #    st.error("YOLO class itself could not be imported.")
             st.stop()
 
+
 # --- 创建选项卡 ---
+# (代码无变化)
 tab1, tab2 = st.tabs(["🔬 影像检测分析", "ℹ️ 关于系统"])
 
 # --- 选项卡1: 影像检测分析 ---
+# (代码无变化, 除了确保变量在使用前已定义)
 with tab1:
     st.subheader("实时影像分析")
     img_file_buffer = st.camera_input(
@@ -142,11 +242,15 @@ with tab1:
                 st.error(f"处理图像或执行预测时出错: {e}")
             finally:
                 if tmp_file_path and os.path.exists(tmp_file_path):
-                    os.remove(tmp_file_path)
+                    try:
+                        os.remove(tmp_file_path)
+                    except OSError as e_rm:
+                        st.warning(f"无法删除临时文件 {tmp_file_path}: {e_rm}")
         else:
             st.error("模型未能成功加载，无法进行预测。请检查应用日志。")
 
 # --- 选项卡2: 关于系统 ---
+# (代码无变化)
 with tab2:
     st.subheader("ℹ️ 关于 XMedical 系统")
     # Markdown content remains the same...
