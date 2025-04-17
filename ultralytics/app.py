@@ -1,5 +1,32 @@
+# app.py
 # Author: Hongyu Lin
 # Institution: School of Mathematics and Computer Science, Shantou University
+
+import sys
+from pathlib import Path
+import streamlit as st 
+
+# --- 将项目根目录添加到 Python 搜索路径 ---
+# 获取当前脚本(app.py)所在的目录
+# 例如: /mount/src/your-repo/1ultralytics
+script_dir = Path(__file__).resolve().parent
+
+# 获取项目根目录 (app.py 目录的上一级)
+# 例如: /mount/src/your-repo
+project_root = script_dir.parent
+# 将项目根目录添加到 sys.path 列表的最前面，使其优先被搜索
+
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+# -----------------------------------------
+
+# 现在可以正常导入位于项目根目录的 ultralytics 模块了
+from ultralytics import YOLO
+import cv2
+import numpy as np
+from PIL import Image
+import tempfile
+import time
 
 # 导入 streamlit 库，并简写为 st，用于创建 Web 应用界面
 import streamlit as st
