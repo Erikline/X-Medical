@@ -66,7 +66,7 @@ st.markdown("###### 利用先进 AI 技术，辅助分析医学影像（如脑�
 # --- 模型加载 ---
 if 'model' not in st.session_state:
     with st.spinner("⏳ 正在加载 X-Medical 深度学习模型，请稍候..."):
-        st.session_state.model = YOLO(r"E:\Desktop\yoloapp-main\ultralytics\Pt Source\X-Medical.pt")
+        st.session_state.model = YOLO('\Pt Source\X-Medical.pt')
 
 # --- 创建选项卡 ---
 tab1, tab2 = st.tabs(["🔬 影像检测分析", "ℹ️ 关于系统"])
