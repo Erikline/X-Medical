@@ -76,6 +76,6 @@
 
 * 该应用现已通过Github与Streamlit形成了可实时访问的Web应用，欢迎医学人士访问：[X-Medical Web Application](https://x-medical.streamlit.app/)
 
-![X-Medical Web Interface](链接到你的截图URL)
+![X-Medical Web Interface](https://github.com/Erikline/X-Medical/blob/main/Streamlit%20Web.png)
 
 
