@@ -70,7 +70,9 @@
 *   **`streamlit: command not found`**: 确认 `streamlit` 已经安装在激活的环境中 (`pip install streamlit`)，或者检查你的系统 PATH 设置。
 *   **应用无法加载或显示错误**: 检查终端输出中是否有其他 Python 错误信息，并根据错误信息调试 `app.py` 脚本。
 
-## 应用体验
+## 📄 许可证 (License)
+
+本项目根据 **[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)** 条款进行许可。
 
 ## 应用体验
 
