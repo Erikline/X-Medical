@@ -1,8 +1,8 @@
-# X-Medical Streamlit 应用运行指南
+# 🚀 X-Medical Streamlit 应用运行指南
 
 本项目含一个使用 Streamlit 构建的 X-Medical 深度学习视觉模型的应用界面。
 
-## 先决条件
+## ✅ 先决条件
 在运行此应用之前，请确保你已经安装了：
 1.  **Python**: (建议 3.8 或更高版本)
 2.  **Conda**: 用于环境管理。
@@ -12,7 +12,7 @@
     *   应用可能需要的其他依赖项 (例如 `opencv-python`, `torch`, `torchvision` 等)。
     这些包应该安装在特定的 Conda 环境中（在本文档示例中，环境名为 `Pytorch`），具体详见requirements.txt。
 
-## 环境设置 (如果尚未完成)
+## ⚙️ 环境设置 (如果尚未完成)
 
 如果你还没有创建环境并安装依赖，可以按以下步骤操作：
 
@@ -35,7 +35,7 @@
         ```
         (请根据实际需要调整包列表)
 
-## 如何运行应用
+## ▶️ 如何运行应用
 
 1.  **打开终端**: 启动 Anaconda Prompt 或你的首选命令行工具。
 2.  **激活 Conda 环境**:
@@ -58,13 +58,13 @@
         # streamlit run ultralytics/app.py
         ```
 
-## 预期行为
+## 👀 预期行为
 
 *   终端会显示正在运行的应用的本地 URL (通常是 `http://localhost:8501`) 和网络 URL。
 *   你的默认网页浏览器会自动打开并加载该应用的界面。如果没有自动打开，请手动将终端显示的 URL 复制到浏览器中访问。
 *   你可以通过 Web 界面与 YOLO 应用进行交互（例如上传图片/视频进行检测）。
 
-## 故障排除
+## 🔧 故障排除
 
 *   **`ModuleNotFoundError`**: 确保你激活了正确的 Conda 环境 (`Pytorch`)，并且所有必需的库都已在该环境中安装。
 *   **`streamlit: command not found`**: 确认 `streamlit` 已经安装在激活的环境中 (`pip install streamlit`)，或者检查你的系统 PATH 设置。
@@ -79,10 +79,8 @@
 *   如果原始作品包含一个 "NOTICE" 文本文件作为其分发的一部分，则您分发的任何衍生作品必须包含该 NOTICE 文件中包含的归属声明的可读副本（不包括那些不修改衍生作品的声明）。
 *   有关完整的权限和限制信息，请参阅项目根目录下的 [`LICENSE`](./LICENSE) 文件。
 
-## 应用体验
+## ✨ 应用体验
 
 * 该应用现已通过Github与Streamlit形成了可实时访问的Web应用，欢迎医学人士访问：[X-Medical Web Application](https://x-medical.streamlit.app/)
 
-![X-Medical Web Interface](https://github.com/Erikline/X-Medical/blob/main/Streamlit%20Web.png)
-
-
+![X-Medical Web Interface](https://raw.githubusercontent.com/Erikline/X-Medical/main/Streamlit%20Web.png)
