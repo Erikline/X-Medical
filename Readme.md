@@ -71,4 +71,11 @@
 *   **应用无法加载或显示错误**: 检查终端输出中是否有其他 Python 错误信息，并根据错误信息调试 `app.py` 脚本。
 
 ## 应用体验
-*   该应用现已通过Github与Streamlit形成了可实时访问的Web应用，欢迎医学人士访问：`https://x-medical.streamlit.app/`
+
+## 应用体验
+
+* 该应用现已通过Github与Streamlit形成了可实时访问的Web应用，欢迎医学人士访问：[X-Medical Web Application](https://x-medical.streamlit.app/)
+
+![X-Medical Web Interface](链接到你的截图URL)
+
+
