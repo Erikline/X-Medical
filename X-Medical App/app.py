@@ -7,7 +7,7 @@ import streamlit as st
 import cv2
 import numpy as np
 from PIL import Image
-from ultralytics import YOLO # 这个导入假定 'ultralytics' 库与 app.py 文件是同级关系或已正确安装
+from ultralytics import YOLO 
 import tempfile
 import time
 import os
@@ -243,7 +243,7 @@ with tab1:
 with tab2:
     st.subheader("ℹ️ 关于 XMedical 系统") # 关于系统小标题
     st.markdown(f"""
-    **XMedical** 是一个基于先进的 **YOLOv8/YOLOv5/YOLOv11/YOLOv12** 等深度学习框架构建的轻量级医学影像智能分析系统。
+    **XMedical** 是一个基于先进的 **YOLOv8/YOLOv11/YOLOv12** 等深度学习框架构建的轻量级医学影像智能分析系统。
     它提供多种经过专门训练的模型，旨在辅助医生或研究人员快速识别医学影像中的特定目标。
 
     当前系统提供了以下分析场景模型供您选择：
@@ -285,7 +285,7 @@ with tab2:
 
     ---
     ### ⚙️ 技术细节:
-    *   **核心框架**: 支持 YOLOv8, YOLOv5 等 (具体取决于您的 `.pt` 文件是如何导出或训练的)。
+    *   **核心框架**: YOLO Series：YOLOv8, YOLOv11 及 YOLOv12。
     *   **识别能力**: 取决于您选择的分析场景对应的模型，每个模型都针对特定类型的医学影像数据进行了训练，能够识别如胸部病变、特定细胞类型、脑肿瘤等预设类别。
     *   **处理方式**: 图像数据的分析和计算在**运行 Streamlit 应用的服务器端**完成，保障了处理速度和效果，同时不占用本地设备过多资源。
 
