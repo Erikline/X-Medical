@@ -232,4 +232,6 @@ __all__ = (
     "C2fCIB",
     "Attention",
     "PSA",
+    "TorchVision",
+    "A2C2f"
 )
